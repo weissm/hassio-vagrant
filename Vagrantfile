@@ -95,6 +95,7 @@ module HassioCommunityAddons
     def vagrant_config(config)
       config.vm.box = @config['box']
       config.vm.post_up_message = @config['post_up_message']
+      config.vm.boot_timeout = 400
     end
 
     # Defines a Vagrant virtual machine
@@ -206,6 +207,11 @@ module HassioCommunityAddons
       ::Vagrant.configure('2') do |config|
         require_nfs_plugin if ::Vagrant::Util::Platform.windows?
         vagrant_config(config)
+        if ::Vagrant.has_plugin?("vagrant-vbguest")
+            config.vbguest.no_install  = true
+            config.vbguest.auto_update = false
+            config.vbguest.no_remote   = true
+        end        
         machine(config, 'hassio')
       end
     end
